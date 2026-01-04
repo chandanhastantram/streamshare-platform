@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -14,7 +14,7 @@ export default function Navbar() {
       setIsScrolled(window.scrollY > 20);
     };
 
-    // Check if user is logged in (check for token in localStorage)
+    // Check if user is logged in
     const token = localStorage.getItem('token');
     setIsLoggedIn(!!token);
 
@@ -26,7 +26,7 @@ export default function Navbar() {
     { href: '/', label: 'Home' },
     { href: '/videos', label: 'Videos' },
     { href: '/photos', label: 'Photos' },
-    ...(isLoggedIn ? [{ href: '/profile', label: 'Profile' }] : []),
+    { href: '/trending', label: 'Trending' },
   ];
 
   return (
@@ -35,23 +35,24 @@ export default function Navbar() {
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'glass py-3' : 'py-5'
+        isScrolled ? 'glass shadow-lg' : ''
       }`}
       style={{
         background: isScrolled
-          ? 'rgba(255, 255, 255, 0.1)'
+          ? 'rgba(26, 31, 46, 0.95)'
           : 'transparent',
+        backdropFilter: isScrolled ? 'blur(10px)' : 'none',
       }}
     >
       <div className="container">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-3 group">
             <motion.div
-              whileHover={{ scale: 1.05, rotate: 5 }}
+              whileHover={{ scale: 1.05 }}
               className="relative"
             >
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-teal)] flex items-center justify-center animate-glow">
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-teal)] flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
                 <svg
                   className="w-6 h-6 text-white"
                   fill="none"
@@ -73,13 +74,18 @@ export default function Navbar() {
                 </svg>
               </div>
             </motion.div>
-            <span className="text-xl font-bold gradient-text font-[family-name:var(--font-secondary)]">
-              StreamShare
-            </span>
+            <div>
+              <span className="text-xl font-bold gradient-text font-[family-name:var(--font-secondary)]">
+                StreamShare
+              </span>
+              <div className="text-xs text-[var(--color-text-secondary)] hidden sm:block">
+                Create & Inspire
+              </div>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link, index) => (
               <motion.div
                 key={link.href}
@@ -89,34 +95,60 @@ export default function Navbar() {
               >
                 <Link
                   href={link.href}
-                  className="text-[var(--color-text-primary)] hover:text-[var(--color-primary)] transition-colors duration-300 font-medium"
+                  className="px-4 py-2 text-[var(--color-text-primary)] hover:text-[var(--color-primary)] transition-colors duration-300 font-medium rounded-lg hover:bg-[var(--color-bg-tertiary)]"
                 >
                   {link.label}
                 </Link>
               </motion.div>
             ))}
+          </div>
 
-            {/* Auth Buttons */}
+          {/* Right Side - Auth & Actions */}
+          <div className="hidden md:flex items-center gap-3">
             {isLoggedIn ? (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  localStorage.removeItem('token');
-                  setIsLoggedIn(false);
-                  window.location.href = '/';
-                }}
-                className="btn btn-glass"
-              >
-                Logout
-              </motion.button>
+              <>
+                <Link href="/upload">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="btn btn-glass flex items-center gap-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Upload
+                  </motion.button>
+                </Link>
+                <Link href="/profile">
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-teal)] flex items-center justify-center text-white font-semibold cursor-pointer shadow-md"
+                  >
+                    U
+                  </motion.div>
+                </Link>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    localStorage.removeItem('token');
+                    setIsLoggedIn(false);
+                    window.location.href = '/';
+                  }}
+                  className="text-[var(--color-text-secondary)] hover:text-[var(--color-error)] transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                </motion.button>
+              </>
             ) : (
-              <div className="flex items-center gap-3">
+              <>
                 <Link href="/auth/login">
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="btn btn-glass"
+                    className="text-[var(--color-text-primary)] hover:text-[var(--color-primary)] font-medium transition-colors px-4 py-2"
                   >
                     Login
                   </motion.button>
@@ -130,7 +162,7 @@ export default function Navbar() {
                     Sign Up
                   </motion.button>
                 </Link>
-              </div>
+              </>
             )}
           </div>
 
@@ -138,7 +170,7 @@ export default function Navbar() {
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-[var(--color-text-primary)]"
+            className="md:hidden p-2 text-[var(--color-text-primary)] hover:bg-[var(--color-bg-tertiary)] rounded-lg transition-colors"
           >
             <svg
               className="w-6 h-6"
@@ -166,49 +198,67 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="md:hidden mt-4 glass rounded-lg p-4"
-          >
-            <div className="flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-[var(--color-text-primary)] hover:text-[var(--color-primary)] transition-colors duration-300 font-medium py-2"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
-              {isLoggedIn ? (
-                <button
-                  onClick={() => {
-                    localStorage.removeItem('token');
-                    setIsLoggedIn(false);
-                    setIsMobileMenuOpen(false);
-                    window.location.href = '/';
-                  }}
-                  className="btn btn-glass w-full"
-                >
-                  Logout
-                </button>
-              ) : (
-                <>
-                  <Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)}>
-                    <button className="btn btn-glass w-full">Login</button>
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden overflow-hidden"
+            >
+              <div className="py-4 space-y-2">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="block px-4 py-3 text-[var(--color-text-primary)] hover:text-[var(--color-primary)] hover:bg-[var(--color-bg-tertiary)] rounded-lg transition-colors font-medium"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {link.label}
                   </Link>
-                  <Link href="/auth/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                    <button className="btn btn-primary w-full">Sign Up</button>
-                  </Link>
-                </>
-              )}
-            </div>
-          </motion.div>
-        )}
+                ))}
+                
+                <div className="border-t border-[var(--color-border)] my-2 pt-2">
+                  {isLoggedIn ? (
+                    <>
+                      <Link href="/upload" onClick={() => setIsMobileMenuOpen(false)}>
+                        <button className="w-full btn btn-glass mb-2 flex items-center justify-center gap-2">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                          </svg>
+                          Upload
+                        </button>
+                      </Link>
+                      <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
+                        <button className="w-full btn btn-glass mb-2">Profile</button>
+                      </Link>
+                      <button
+                        onClick={() => {
+                          localStorage.removeItem('token');
+                          setIsLoggedIn(false);
+                          setIsMobileMenuOpen(false);
+                          window.location.href = '/';
+                        }}
+                        className="w-full btn btn-glass text-[var(--color-error)]"
+                      >
+                        Logout
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/auth/login" onClick={() => setIsMobileMenuOpen(false)}>
+                        <button className="w-full btn btn-glass mb-2">Login</button>
+                      </Link>
+                      <Link href="/auth/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                        <button className="w-full btn btn-primary">Sign Up</button>
+                      </Link>
+                    </>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.nav>
   );

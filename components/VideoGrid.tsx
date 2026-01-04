@@ -64,7 +64,7 @@ export default function VideoGrid({ videos }: VideoGridProps) {
                 
                 {/* Play Button Overlay */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-40">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-teal)] flex items-center justify-center animate-glow">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-teal)] flex items-center justify-center shadow-lg">
                     <svg
                       className="w-8 h-8 text-white ml-1"
                       fill="currentColor"

@@ -109,7 +109,7 @@ export default function VideoPlayer({ videoUrl, title, thumbnail }: VideoPlayerP
           <motion.div
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            className="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-teal)] flex items-center justify-center animate-glow"
+            className="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-teal)] flex items-center justify-center shadow-lg"
           >
             <svg
               className="w-10 h-10 text-white ml-1"

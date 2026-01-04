@@ -41,10 +41,10 @@ export default function Hero() {
         className="absolute inset-0 z-0"
         style={{
           background:
-            'linear-gradient(135deg, #00a8ff 0%, #00d9ff 25%, #00bfa5 50%, #ff6b35 75%, #ffa726 100%)',
+            'linear-gradient(135deg, #4a90e2 0%, #5dade2 25%, #48c9b0 50%, #e67e73 75%, #ffa726 100%)',
           backgroundSize: '400% 400%',
           animation: 'gradientShift 15s ease infinite',
-          opacity: 0.15,
+          opacity: 0.12,
         }}
       />
 
